@@ -1,8 +1,9 @@
+import json
 import os
-import time
 
+import gspread
 # import requests as req
-from flask import Blueprint, render_template, send_from_directory, redirect, request, url_for, current_app, Response
+from flask import Blueprint, render_template, send_from_directory, redirect, request
 
 # from sendgrid import SendGridAPIClient
 # from sendgrid.helpers.mail import Mail
@@ -14,7 +15,6 @@ if os.environ.get('FLASK_ENV') == 'development':
 
 views = Blueprint('views', __name__)
 
-
 # sg = SendGridAPIClient(os.environ['SENDGRID_API_KEY'])
 
 # mlmp_email = "mainlinemathproject@gmail.com"
@@ -24,6 +24,13 @@ views = Blueprint('views', __name__)
 # EMAIL_VERIFICATION_API_KEY = os.environ["EMAIL_VERIFICATION_API_KEY"]
 
 # BLOB_READ_WRITE_TOKEN = os.environ["BLOB_READ_WRITE_TOKEN"]
+
+google_service_account_key = json.loads(os.environ["GOOGLE_SERVICE_ACCOUNT_KEY"])
+service_account = gspread.service_account_from_dict(google_service_account_key)
+
+
+def get_standings_sheet_data():
+	return service_account.open_by_key("1Fz02ntmQ7oQdZPYXKBAR0wgjYWlAsw8qtnrAuO5A7Dk").sheet1.get_all_records()
 
 
 @views.route("/assets/<path:path>")
@@ -58,9 +65,19 @@ def coaches():
 	return render_template("coaches.html")
 
 
+@views.route('/photos/', methods=['GET'])
+def photos():
+	return render_template("photos.html")
+
+
 @views.route('/standings/', methods=['GET'])
 def standings():
 	return render_template("standings.html")
+
+
+@views.route('/standings_data/', methods=['GET'])
+def standings_data():
+	return get_standings_sheet_data()
 
 
 @views.route('/contact/', methods=['GET'])

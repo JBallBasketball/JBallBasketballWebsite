@@ -26,7 +26,6 @@ imagekit = ImageKit(
 	url_endpoint=imagekit_key['url-endpoint']
 )
 
-
 VERBOSE = True
 
 
@@ -108,6 +107,7 @@ def change_image_references_to_imagekit():
 		with open(f"app/templates/{file}", "r") as fp:
 			file_text = fp.read()
 
+		file_text = file_text.replace(".html", "/")
 		file_text = file_text.replace("/assets/img/", "https://ik.imagekit.io/jballbasketball/")
 
 		with open(f"app/templates/{file}", "w") as fp:
