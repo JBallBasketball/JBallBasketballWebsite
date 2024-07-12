@@ -2,3 +2,4 @@ flask~=3.0.3
 imagekitio~=4.0.1
 python-dotenv~=1.0.1
 requests~=2.32.3
+gspread~=6.1.2
