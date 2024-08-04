@@ -1,9 +1,19 @@
+import base64
+import io
 import json
 import os
+import time
+
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 import gspread
+import pyotp
+from PIL import Image
+import requests as req
 # import requests as req
-from flask import Blueprint, render_template, send_from_directory, redirect, request
+from flask import Blueprint, render_template, send_from_directory, redirect, request, url_for
 
 # from sendgrid import SendGridAPIClient
 # from sendgrid.helpers.mail import Mail
@@ -17,16 +27,14 @@ views = Blueprint('views', __name__)
 
 # sg = SendGridAPIClient(os.environ['SENDGRID_API_KEY'])
 
-# mlmp_email = "mainlinemathproject@gmail.com"
-# if os.environ.get('FLASK_ENV') == 'development':
-# 	mlmp_email = os.environ.get('DEV_EMAIL')
-
 # EMAIL_VERIFICATION_API_KEY = os.environ["EMAIL_VERIFICATION_API_KEY"]
 
-# BLOB_READ_WRITE_TOKEN = os.environ["BLOB_READ_WRITE_TOKEN"]
+BLOB_READ_WRITE_TOKEN = os.environ["BLOB_READ_WRITE_TOKEN"]
 
 google_service_account_key = json.loads(os.environ["GOOGLE_SERVICE_ACCOUNT_KEY"])
 service_account = gspread.service_account_from_dict(google_service_account_key)
+
+otp_validator = pyotp.TOTP(os.environ["OTP_SECRET_KEY"])
 
 
 def get_standings_sheet_data():
@@ -51,8 +59,7 @@ def html_redirect(path):
 
 @views.route('/', methods=['GET'])
 def index():
-	# email_sent = 'email_sent' in request.args and request.args.get("email_sent")
-	return render_template("index.html")  # email_sent=email_sent
+	return render_template("index.html")
 
 
 @views.route('/calendar/', methods=['GET'])
@@ -89,49 +96,113 @@ def contact():
 def signup():
 	return render_template("signup.html")
 
-# @views.route('/contact/', methods=['POST'])
-# @views.route('/', methods=['POST'])
-# def contact_form_submitted():
-# 	def email_is_spam(email_to_check):
-# 		email_verification_response = req.get(f"https://www.ipqualityscore.com/api/json/email/"
-# 		                                      f"{EMAIL_VERIFICATION_API_KEY}/{email_to_check}").json()
-# 		email_score = email_verification_response["overall_score"]
-# 		return email_score <= 1
-#
-# 	name = request.form.get("name")
-# 	email = request.form.get("email")
-# 	subject = request.form.get("subject")
-# 	message = request.form.get("message")
-#
-# 	email_sent = False
-# 	if request.form.get("g-recaptcha-response") == "" or email_is_spam(email):
-# 		current_log = req.get("https://3zh9uaj4n3dl5zbo.public.blob.vercel-storage.com/contact_form_log.txt").text
-#
-# 		new_log = f"{time.asctime()}-----{name}-----{email}-----{subject}-----{message}"
-#
-# 		req.put(f"https://blob.vercel-storage.com/contact_form_log.txt", data=current_log + "\n" + new_log, headers={
-# 			"access": "public",
-# 			"authorization": f"Bearer {BLOB_READ_WRITE_TOKEN}",
-# 			"x-api-version": "4",
-# 			"x-content-type": 'text/plain',
-# 			"x-add-random-suffix": "false"
-# 		})
-# 	else:
-# 		form_responses = request.form.to_dict()
-# 		form_responses.pop("g-recaptcha-response")
-# 		if "submit" in form_responses:
-# 			form_responses.pop("submit")
-# 		message = Mail(
-# 			from_email='mlmp.automated@gmail.com',
-# 			to_emails=[mlmp_email],
-# 			subject=f'Contact form filled by {name}!',
-# 			html_content=f"A contact form was filled out with details:" +
-# 			             "".join(f"<br>{key.title()}: {value}" for key, value in form_responses.items())
-# 		)
-# 		try:
-# 			sg.send(message)
-# 			email_sent = True
-# 		except Exception as e:
-# 			print(e)
-#
-# 	return redirect(url_for(".index", email_sent=email_sent))
+
+valid_account_creds = list(map(lambda el: tuple(el.split(":")), os.environ["ADMIN_LOGINS"].split(",")))
+valid_temp_creds = {}  # {(ip, auth code): timestamp}
+failed_login_attempts = {}
+banned_ips = []
+
+
+@views.route('/admin/', methods=['GET'])
+def admin():
+	# return render_template("admin.html")
+
+	if ("auth" in request.args) and ((key := (request.remote_addr, request.args.get("auth"))) in valid_temp_creds):
+		if time.time() - valid_temp_creds[key] <= 3600:  # 1 hour
+			return render_template("admin.html")
+	return redirect(url_for("views.admin_login"))
+
+
+@views.route('/admin-login/', methods=['GET'])
+def admin_login():
+	return render_template("admin-login.html")
+
+
+@views.route('/admin-login/', methods=['POST'])
+def admin_login_post():
+	ip = request.remote_addr
+
+	if ip in banned_ips:
+		return redirect(url_for("views.admin_login"))
+
+	username = request.form.get("username")
+	password = request.form.get("password")
+	otp = request.form.get("otp")
+
+	print(username, password, otp, valid_account_creds, otp_validator.now())
+	if (username, password) in valid_account_creds and otp_validator.verify(otp):
+		temp_auth_code = pyotp.random_base32()
+		valid_temp_creds[(ip, temp_auth_code)] = time.time()
+		return redirect(url_for("views.admin", auth=temp_auth_code))
+
+	if ip not in failed_login_attempts:
+		failed_login_attempts[ip] = 0
+	failed_login_attempts[ip] += 1
+
+	if failed_login_attempts[ip] > 10:
+		banned_ips.append(ip)
+
+	return redirect(url_for("views.admin_login"))
+
+
+@views.route("/get-all-event-links/", methods=['GET'])
+def get_all_event_links():
+	return [event["url"] for event in req.get("https://blob.vercel-storage.com",
+	                                          headers={
+		                                          "authorization": "Bearer " + BLOB_READ_WRITE_TOKEN,
+		                                          "prefix": "events/"
+	                                          }).json()["blobs"] if event["size"] and event["pathname"].startswith("events/")]
+
+
+def pillow_image_to_data_url(img):
+	buffer = io.BytesIO()
+	img.save(buffer, format="JPEG")
+	return 'data:image/jpeg;base64,' + base64.b64encode(buffer.getvalue()).decode("utf-8")
+
+
+def data_url_to_pillow_image(base64_str):
+	return Image.open(io.BytesIO(base64.decodebytes(bytes(base64_str.split(",")[-1], "utf-8"))))
+
+
+def optimize_image(data_url):
+	img = data_url_to_pillow_image(data_url)
+	img.thumbnail((1280, 1440))  # make max width 1280 and max height 1440 without changing aspect ratio
+
+	return pillow_image_to_data_url(img)
+
+
+def upload_image(data_url):
+	return cloudinary.uploader.upload(data_url)["url"]
+
+
+@views.route("/post-event/", methods=['POST'])
+def post_event():
+	event_data = request.json
+
+	if "auth" not in request.args:
+		return {}, 401
+
+	if not (((key := (request.remote_addr, request.args.get("auth"))) in valid_temp_creds
+			and time.time() - valid_temp_creds[key] <= 3600)):  # 1 hour
+		return redirect(url_for("views.admin_login"))
+
+	if ("title" not in event_data
+			or "desc" not in event_data
+			or "date" not in event_data
+			or "cover" not in event_data
+			or "photos" not in event_data):
+		return {}, 400
+
+	event_data["cover"] = upload_image(optimize_image(event_data["cover"]))
+
+	event_data["photos"] = list(map(lambda data_url: upload_image(optimize_image(data_url)), event_data["photos"]))
+
+	req.put(f"https://blob.vercel-storage.com/events/{event_data["date"]}.json", data=json.dumps(event_data), headers={
+		"access": "public",
+		"authorization": f"Bearer {BLOB_READ_WRITE_TOKEN}",
+		"x-api-version": "4",
+		"x-content-type": 'application/json',
+		"x-cache-control-max-age": f"{0}",  # Not cached
+	})
+
+	return {}, 200
