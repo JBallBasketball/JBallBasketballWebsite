@@ -186,7 +186,8 @@ def post_event():
 	if not (((key := (request.remote_addr, request.args.get("auth"))) in valid_temp_creds
 			and time.time() - valid_temp_creds[key] <= 3600)):  # 1 hour
 		print("Unauthorized event post attempt: Invalid auth param!")
-		return redirect(url_for("views.admin_login"))
+		print(valid_temp_creds)
+		return {}, 401
 
 	if ("title" not in event_data
 			or "desc" not in event_data
