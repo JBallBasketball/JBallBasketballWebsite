@@ -135,7 +135,7 @@ function submitNewEvent() {
 
 	try {
 		const urlParams = new URLSearchParams(window.location.search);
-		fetch(`/post-event/?auth=${urlParams.get("auth")}`, {
+		fetch(`/api/post-new-event/?auth=${urlParams.get("auth")}`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

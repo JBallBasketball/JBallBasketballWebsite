@@ -6,3 +6,4 @@ gspread~=6.1.2
 pyotp~=2.9.0
 pillow~=10.4.0
 cloudinary~=1.41.0
+pymongo[srv]~=4.8.0
