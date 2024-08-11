@@ -2,82 +2,66 @@ function randomUUID() {
 	return Math.random().toString(36).substring(2, 10);
 }
 
-fetch("/get-all-event-links")
+fetch("/api/get-all-event-links")
 	.then((resp) => {
 		if (!resp.ok) {
 			throw new Error(`Failed fetching event data! ${resp.status}`);
 		}
 		return resp.json();
 	})
-	.then((allEventLinks) => {
-		const fetchAllJson = async (links) => {
-			try {
-				const fetchPromises = links.map((link) =>
-					fetch(link).then((response) => response.json()),
-				);
-				const jsonDataArray = await Promise.all(fetchPromises);
-				return jsonDataArray;
-			} catch (error) {
-				console.error("Error fetching JSON data:", error);
-				return [];
-			}
-		};
-		fetchAllJson(allEventLinks).then((allEventData) => {
-			const examplePhotoCard = document.getElementById("example-photo-card");
-			const photoCardContainer = document.getElementById(
-				"photo-card-container",
-			);
+	.then((allEventData) => {
+		const examplePhotoCard = document.getElementById("example-photo-card");
+		const photoCardContainer = document.getElementById("photo-card-container");
 
-			for (eventData of allEventData) {
-				const newPhotoCard = examplePhotoCard.cloneNode(true);
-				newPhotoCard.removeAttribute("id");
+		for (eventData of allEventData) {
+			const newPhotoCard = examplePhotoCard.cloneNode(true);
+			newPhotoCard.removeAttribute("id");
 
-				const title = newPhotoCard.querySelector("#example-photo-card-title");
-				const desc = newPhotoCard.querySelector("#example-photo-card-desc");
-				const date = newPhotoCard.querySelector("#example-photo-card-date");
-				const cover = newPhotoCard.querySelector("#example-photo-card-cover");
-				const button = newPhotoCard.querySelector("#example-photo-card-button");
-				const modal = newPhotoCard.querySelector("#example-photo-card-modal");
+			const title = newPhotoCard.querySelector("#example-photo-card-title");
+			const desc = newPhotoCard.querySelector("#example-photo-card-desc");
+			const date = newPhotoCard.querySelector("#example-photo-card-date");
+			const cover = newPhotoCard.querySelector("#example-photo-card-cover");
+			const button = newPhotoCard.querySelector("#example-photo-card-button");
+			const modal = newPhotoCard.querySelector("#example-photo-card-modal");
 
-				title.removeAttribute("id");
-				desc.removeAttribute("id");
-				date.removeAttribute("id");
-				cover.removeAttribute("id");
-				button.removeAttribute("id");
+			title.removeAttribute("id");
+			desc.removeAttribute("id");
+			date.removeAttribute("id");
+			cover.removeAttribute("id");
+			button.removeAttribute("id");
 
-				title.innerHTML = eventData.title;
-				desc.innerHTML = eventData.desc;
-				date.innerHTML = eventData.date;
+			title.innerHTML = eventData.title;
+			desc.innerHTML = eventData.desc;
+			date.innerHTML = eventData.date;
 
-				cover.src = eventData.cover;
+			cover.src = eventData.cover;
 
-				const modalID = randomUUID();
-				modal.id = `modal-${modalID}`;
-				button.dataset.bsTarget = `#modal-${modalID}`;
+			const modalID = randomUUID();
+			modal.id = `modal-${modalID}`;
+			button.dataset.bsTarget = `#modal-${modalID}`;
 
-				modal.querySelector(".modal-title").innerHTML =
-					`${eventData.title} - ${eventData.date}`;
+			modal.querySelector(".modal-title").innerHTML =
+				`${eventData.title} - ${eventData.date}`;
 
-				const exampleModalImage = modal.querySelector("#example-modal-image");
+			const exampleModalImage = modal.querySelector("#example-modal-image");
 
-				for (photo of eventData.photos) {
-					const newModalImage = exampleModalImage.cloneNode(true);
-					newModalImage.removeAttribute("id");
-					newModalImage.classList.remove("invisible-intangible");
+			for (photo of eventData.photos) {
+				const newModalImage = exampleModalImage.cloneNode(true);
+				newModalImage.removeAttribute("id");
+				newModalImage.classList.remove("invisible-intangible");
 
-					newModalImage.querySelector("a").href = photo;
-					newModalImage.querySelector("img").src = photo;
+				newModalImage.querySelector("a").href = photo;
+				newModalImage.querySelector("img").src = photo;
 
-					exampleModalImage.parentElement.appendChild(newModalImage);
-				}
-
-				exampleModalImage.remove();
-
-				photoCardContainer.appendChild(newPhotoCard);
+				exampleModalImage.parentElement.appendChild(newModalImage);
 			}
 
-			examplePhotoCard.remove();
-		});
+			exampleModalImage.remove();
+
+			photoCardContainer.appendChild(newPhotoCard);
+		}
+
+		examplePhotoCard.remove();
 	})
 	.catch((err) => {
 		console.log(err);

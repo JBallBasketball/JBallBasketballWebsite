@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-	fetch("/standings_data/")
+	fetch("/api/standings-data/")
 		.then((response) => {
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
