@@ -1,6 +1,8 @@
 import datetime
+import json
 import os
 
+import gspread
 import pymongo.database
 import pyotp
 from bson import CodecOptions
@@ -12,6 +14,9 @@ if os.environ.get('FLASK_ENV') == 'development':
 	from dotenv import load_dotenv
 
 	load_dotenv()
+
+google_service_account_key = json.loads(os.environ["GOOGLE_SERVICE_ACCOUNT_KEY"])
+service_account = gspread.service_account_from_dict(google_service_account_key)
 
 MONGODB_PASSWORD = os.environ["MONGODB_PASSWORD"]
 
@@ -56,3 +61,7 @@ def add_new_event(event_data):
 
 def get_all_events():
 	return [{k: v for k, v in event.items() if k != "_id"} for event in events.find()]
+
+
+def get_standings_sheet_data():
+	return service_account.open_by_key("1Fz02ntmQ7oQdZPYXKBAR0wgjYWlAsw8qtnrAuO5A7Dk").sheet1.get_all_records()

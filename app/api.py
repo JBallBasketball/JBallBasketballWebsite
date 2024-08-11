@@ -39,28 +39,14 @@ if os.environ.get('FLASK_ENV') == 'development':
 
 api = Blueprint('api', __name__)
 
-google_service_account_key = json.loads(os.environ["GOOGLE_SERVICE_ACCOUNT_KEY"])
-service_account = gspread.service_account_from_dict(google_service_account_key)
-
-
-def get_standings_sheet_data():
-	return service_account.open_by_key("1Fz02ntmQ7oQdZPYXKBAR0wgjYWlAsw8qtnrAuO5A7Dk").sheet1.get_all_records()
-
 
 @api.route('/standings-data/', methods=['GET'])
 def standings_data():
-	return get_standings_sheet_data()
+	return database.get_standings_sheet_data()
 
 
-@api.route("/get-all-event-links/", methods=['GET'])
-def get_all_event_links():
-	# return [event["url"] for event in req.get("https://blob.vercel-storage.com",
-	#                                           headers={
-	# 	                                          "authorization": "Bearer " + BLOB_READ_WRITE_TOKEN,
-	# 	                                          "prefix": "events/"
-	#                                           }).json()["blobs"] if
-	#         event["size"] and event["pathname"].startswith("events/")]
-
+@api.route("/get-all-events/", methods=['GET'])
+def get_all_events():
 	return database.get_all_events()
 
 
