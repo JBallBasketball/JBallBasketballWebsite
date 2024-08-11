@@ -2,7 +2,7 @@ function randomUUID() {
 	return Math.random().toString(36).substring(2, 10);
 }
 
-fetch("/api/get-all-event-links")
+fetch("/api/get-all-events")
 	.then((resp) => {
 		if (!resp.ok) {
 			throw new Error(`Failed fetching event data! ${resp.status}`);
