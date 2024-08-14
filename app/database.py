@@ -5,7 +5,7 @@ import os
 import gspread
 import pymongo.database
 import pyotp
-from bson import CodecOptions
+from bson import CodecOptions, ObjectId
 
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
@@ -60,8 +60,16 @@ def add_new_event(event_data):
 
 
 def get_all_events():
-	return [{k: v for k, v in event.items() if k != "_id"} for event in events.find()]
+	event_data = list(events.find())
+	for event in event_data:
+		event["_id"] = str(event["_id"])
+	event_data.sort(key=lambda x: x["date"], reverse=True)
+	return event_data
 
 
 def get_standings_sheet_data():
 	return service_account.open_by_key("1Fz02ntmQ7oQdZPYXKBAR0wgjYWlAsw8qtnrAuO5A7Dk").sheet1.get_all_records()
+
+
+def delete_event(event_id):
+	events.delete_one({"_id": ObjectId(event_id)})
