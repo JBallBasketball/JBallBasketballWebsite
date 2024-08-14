@@ -109,7 +109,6 @@ def admin_login_post():
 	password = request.form.get("password")
 	otp = request.form.get("otp")
 
-	# print(username, password, otp, valid_account_creds, otp_validator.now())
 	if (username, password) in valid_account_creds and otp_validator.verify(otp):
 		auth_code = database.add_temp_cred(ip)
 		return redirect(url_for("views.admin", auth=auth_code))
