@@ -54,7 +54,7 @@
                         <div class="card-body p-sm-5">
                             <h2 class="text-center mb-4">Sign up</h2>
                             <div style="text-align: center;margin: 20px;"><img class="img-fluid" src="https://ik.imagekit.io/jballbasketball/logos/jball-logo.png" alt="jball-logo" width="177" height="177"></div>
-                            <form data-bss-recipient="c35295c161751921aad3369a8d9c3993">
+                            <form id="signup-form" data-bss-recipient="56b53bdfa88cc1d5cde0d2db4779ac4d">
                                 <div class="d-flex"><input class="form-control" type="text" name="firstname" placeholder="Firstname" style="margin-right: 1%;" autocomplete="off" required=""><input class="form-control" type="text" name="lastname" placeholder="Lastname" style="margin-left: 1%;" autocomplete="off" required=""></div>
                                 <hr>
                                 <div><input class="form-control mb-3" type="tel" name="phone" placeholder="Phone number" required="" pattern="^(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$" inputmode="tel"></div>
@@ -62,38 +62,38 @@
                                 <div class="mb-3"><input class="form-control" type="text" name="instagram" placeholder="Instagram (not required, but encouraged)"></div>
                                 <hr>
                                 <div class="mb-3"><label class="form-label">Rate your basketball abilities on a scale of 1-5:</label>
-                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-11" name="ability" required=""><label class="form-check-label" for="formCheck-11">1 - Not a functional basketball player</label></div>
-                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-12" name="ability" required=""><label class="form-check-label" for="formCheck-12">2 - Functional basketball player but not competitively</label></div>
-                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-13" name="ability" required=""><label class="form-check-label" for="formCheck-13">3 - Freshmen basketball/rec league level player</label></div>
-                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-14" name="ability" required=""><label class="form-check-label" for="formCheck-14">4 - JV/Varsity/AAU level player</label></div>
-                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-15" name="ability" required=""><label class="form-check-label" for="formCheck-15">5 - Varsity level player</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-11" name="ability" required="" value="1"><label class="form-check-label" for="formCheck-11">1 - Not a functional basketball player</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-12" name="ability" required="" value="2"><label class="form-check-label" for="formCheck-12">2 - Functional basketball player but not competitively</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-13" name="ability" required="" value="3"><label class="form-check-label" for="formCheck-13">3 - Freshmen basketball/rec league level player</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-14" name="ability" required="" value="4"><label class="form-check-label" for="formCheck-14">4 - JV/Varsity/AAU level player</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-15" name="ability" required="" value="5"><label class="form-check-label" for="formCheck-15">5 - Varsity level player</label></div>
                                 </div>
                                 <hr>
                                 <div class="d-flex d-xl-flex justify-content-between align-items-xl-center mb-3"><label class="form-label d-xl-flex">Shirt size:</label>
-                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-5" name="shirt-size" required=""><label class="form-check-label" for="formCheck-5">XS</label></div>
-                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-6" name="shirt-size" required=""><label class="form-check-label" for="formCheck-6">S</label></div>
-                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-7" name="shirt-size" required=""><label class="form-check-label" for="formCheck-7">M</label></div>
-                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-8" name="shirt-size" required=""><label class="form-check-label" for="formCheck-8">L</label></div>
-                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-9" name="shirt-size" required=""><label class="form-check-label" for="formCheck-9">XL</label></div>
-                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-10" name="shirt-size" required=""><label class="form-check-label" for="formCheck-10">XXL</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-5" name="shirt-size" required="" value="xs"><label class="form-check-label" for="formCheck-5">XS</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-6" name="shirt-size" required="" value="s"><label class="form-check-label" for="formCheck-6">S</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-7" name="shirt-size" required="" value="m"><label class="form-check-label" for="formCheck-7">M</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-8" name="shirt-size" required="" value="l"><label class="form-check-label" for="formCheck-8">L</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-9" name="shirt-size" required="" value="xl"><label class="form-check-label" for="formCheck-9">XL</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-10" name="shirt-size" required="" value="xxl"><label class="form-check-label" for="formCheck-10">XXL</label></div>
                                 </div>
                                 <div class="d-flex align-items-end align-items-sm-end align-items-md-end align-items-lg-end align-items-xl-end align-items-xxl-end mb-3"><label class="form-label d-xl-flex">Height:&nbsp;</label><input class="form-control" type="number" name="height-feet" placeholder="Feet" min="1" max="10" style="margin-left: 2%;" required=""><input class="form-control" type="number" name="height-inches" placeholder="Inches" max="11" min="0" style="margin-left: 2%;" required=""></div>
                                 <div class="d-flex align-items-end align-items-sm-end align-items-md-end align-items-lg-end align-items-xl-end align-items-xxl-end"><label class="form-label d-xl-flex">Weight:&nbsp;</label><input class="form-control" type="number" name="weight" placeholder="Pounds" min="1" max="1000" style="margin-left: 2%;" required=""></div>
                                 <hr>
-                                <div class="mb-3"><input class="form-control" type="text" name="school" placeholder="School"></div>
+                                <div class="mb-3"><input class="form-control" type="text" name="school" placeholder="School" required=""></div>
                                 <div class="d-flex d-xl-flex justify-content-between align-items-xl-center mb-3"><label class="form-label">Grade:</label>
-                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-1" name="grade" required=""><label class="form-check-label" for="formCheck-1">9th</label></div>
-                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-2" name="grade" required=""><label class="form-check-label" for="formCheck-2">10th</label></div>
-                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-3" name="grade" required=""><label class="form-check-label" for="formCheck-3">11th</label></div>
-                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-4" name="grade" required=""><label class="form-check-label" for="formCheck-4">12th</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-1" name="grade" required="" value="9"><label class="form-check-label" for="formCheck-1">9th</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-2" name="grade" required="" value="10"><label class="form-check-label" for="formCheck-2">10th</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-3" name="grade" required="" value="11"><label class="form-check-label" for="formCheck-3">11th</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-4" name="grade" required="" value="12"><label class="form-check-label" for="formCheck-4">12th</label></div>
                                 </div>
                                 <div><input class="form-control" type="text" name="synagogue" placeholder="Synagogue (or enter &quot;none&quot;)" required=""></div>
                                 <hr>
                                 <div><label class="form-label">Would you be interested in score boarding for this upcoming J-Ball season?&nbsp;This can be used as a resume booster, to fulfill community service hours, NHS hours, or just to watch and have a role. This position will be unpaid.</label>
                                     <div class="d-flex d-xl-flex justify-content-between align-items-xl-center mb-3">
                                         <hr>
-                                        <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-18" name="scoreboarding" required=""><label class="form-check-label" for="formCheck-18">Yes</label></div>
-                                        <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-19" name="scoreboarding" required=""><label class="form-check-label" for="formCheck-19">No</label></div>
+                                        <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-18" name="scoreboarding" required="" value="yes"><label class="form-check-label" for="formCheck-18">Yes</label></div>
+                                        <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-19" name="scoreboarding" required="" value="no"><label class="form-check-label" for="formCheck-19">No</label></div>
                                         <hr>
                                     </div>
                                 </div>
@@ -101,13 +101,13 @@
                                 <div><label class="form-label">Are you interested in being a Captain? <br>(Junior and Seniors ONLY)</label>
                                     <div class="d-flex d-xl-flex justify-content-between align-items-xl-center mb-3">
                                         <hr>
-                                        <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-16" name="captain" required=""><label class="form-check-label" for="formCheck-16">Yes</label></div>
-                                        <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-17" name="captain" required=""><label class="form-check-label" for="formCheck-17">No</label></div>
+                                        <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-16" name="captain" required="" value="yes"><label class="form-check-label" for="formCheck-16">Yes</label></div>
+                                        <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-17" name="captain" required="" value="no"><label class="form-check-label" for="formCheck-17">No</label></div>
                                         <hr>
                                     </div>
                                 </div>
-                                <hr>
-                                <div><button class="btn btn-primary d-block w-100" type="submit">Send </button></div>
+                                <hr><input class="form-control d-none" type="text" readonly="" placeholder="Form Type" value="signup-form-jball" name="form-id">
+                                <div><button class="btn btn-primary d-block w-100" type="submit" onclick="sendSignupToSheet();">Send </button></div>
                             </form>
                         </div>
                     </div>
@@ -151,6 +151,7 @@
     <script src="/assets/js/Lightbox-Gallery.js"></script>
     <script src="/assets/js/Simple-Slider-swiper-bundle.min.js"></script>
     <script src="/assets/js/Simple-Slider.js"></script>
+    <script src="/assets/js/signup.js"></script>
 </body>
 
 </html>

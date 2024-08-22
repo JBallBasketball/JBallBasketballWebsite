@@ -16,6 +16,7 @@ fetch("/api/get-all-events")
 		for (eventData of allEventData) {
 			const newPhotoCard = examplePhotoCard.cloneNode(true);
 			newPhotoCard.removeAttribute("id");
+			newPhotoCard.classList.remove("d-none")
 
 			const title = newPhotoCard.querySelector("#example-photo-card-title");
 			const desc = newPhotoCard.querySelector("#example-photo-card-desc");

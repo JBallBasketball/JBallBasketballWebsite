@@ -389,10 +389,17 @@ function updateEditEventsModal() {
 						newPhotoDeleteButton.onclick = () => deletePhoto(photoID);
 
 						newPhotoContainer.appendChild(newPhotoHolder);
+
+						newPhotoAddButtonHolder.remove();
+						newPhotoContainer.appendChild(newPhotoAddButtonHolder);
 					};
 
 					reader.readAsDataURL(newPhotoAddButton.files[0]);
+					
 				};
+
+				newPhotoAddButtonHolder.remove();
+				newPhotoContainer.appendChild(newPhotoAddButtonHolder);
 
 				const newDeleteButton = newEvent.querySelector(
 					"#example-editable-event-delete-button",
