@@ -1,21 +1,12 @@
-import base64
-import io
 import json
 import os
-import time
-
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
 
 import gspread
-import pyotp
-from PIL import Image
-import requests as req
-# import requests as req
 from flask import Blueprint, render_template, send_from_directory, redirect, request, url_for
 
 import app.database as database
+
+# import pyotp
 
 if os.environ.get('FLASK_ENV') == 'development':
 	from dotenv import load_dotenv
@@ -27,7 +18,8 @@ views = Blueprint('views', __name__)
 google_service_account_key = json.loads(os.environ["GOOGLE_SERVICE_ACCOUNT_KEY"])
 service_account = gspread.service_account_from_dict(google_service_account_key)
 
-otp_validator = pyotp.TOTP(os.environ["OTP_SECRET_KEY"])
+
+# otp_validator = pyotp.TOTP(os.environ["OTP_SECRET_KEY"])
 
 
 @views.route("/assets/<path:path>")
@@ -107,9 +99,9 @@ def admin_login_post():
 
 	username = request.form.get("username")
 	password = request.form.get("password")
-	otp = request.form.get("otp")
+	# otp = request.form.get("otp")
 
-	if (username, password) in valid_account_creds and otp_validator.verify(otp):
+	if (username, password) in valid_account_creds:  # and otp_validator.verify(otp):
 		auth_code = database.add_temp_cred(ip)
 		return redirect(url_for("views.admin", auth=auth_code))
 
