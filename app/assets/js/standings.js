@@ -39,6 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				standingsContainer.appendChild(teamRow);
 			}
+
+			document.getElementById("loading-div").remove()
 		})
 		.catch((error) => {
 			console.error("There was a problem with the fetch operation:", error);
