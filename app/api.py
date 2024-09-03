@@ -50,32 +50,8 @@ def get_all_events():
 	return database.get_all_events()
 
 
-def pillow_image_to_data_url(img):
-	buffer = io.BytesIO()
-	img.save(buffer, format="JPEG")
-	return 'data:image/jpeg;base64,' + base64.b64encode(buffer.getvalue()).decode("utf-8")
-
-
-def data_url_to_pillow_image(base64_str):
-	return Image.open(io.BytesIO(base64.decodebytes(bytes(base64_str.split(",")[-1], "utf-8"))))
-
-
-def optimize_image(data_url):
-	img = data_url_to_pillow_image(data_url)
-	img = img.convert("RGB")
-	img.thumbnail((1280, 1440))  # make max width 1280 and max height 1440 without changing aspect ratio
-
-	return pillow_image_to_data_url(img)
-
-
-def upload_image(data_url):
-	return cloudinary.uploader.upload(data_url)["url"]
-
-
-@api.route("/post-new-event/", methods=['POST'])
-def post_new_event():
-	event_data = request.json
-
+@api.route("/update-events/", methods=['POST'])
+def update_events():
 	if "auth" not in request.args:
 		print("Unauthorized event post attempt: No auth param!")
 		return {"success": False}, 401
@@ -84,72 +60,7 @@ def post_new_event():
 		print("Unauthorized event post attempt: Invalid auth param!")
 		return {"success": False}, 401
 
-	if ("title" not in event_data
-			or "desc" not in event_data
-			or "date" not in event_data
-			or "cover" not in event_data
-			or "photos" not in event_data):
-		return {"success": False}, 400
-
-	event_data["cover"] = upload_image(optimize_image(event_data["cover"]))
-
-	event_data["photos"] = list(map(lambda data_url: upload_image(optimize_image(data_url)), event_data["photos"]))
-
-	database.add_new_event(event_data)
-
-	return {"success": True}, 200
-
-
-@api.route("/delete-event/", methods=['POST'])
-def delete_event():
-	event_data = request.json
-
-	if "auth" not in request.args:
-		print("Unauthorized event post attempt: No auth param!")
-		return {"success": False}, 401
-
-	if not database.validate_temp_cred(request.remote_addr, request.args.get("auth")):  # 1 hour
-		print("Unauthorized event post attempt: Invalid auth param!")
-		return {"success": False}, 401
-
-	if "id" not in event_data:
-		return {"success": False}, 400
-
-	database.delete_event(event_data["id"])
-
-	return {"success": True}, 200
-
-
-@api.route("/save-event/", methods=['POST'])
-def save_event():
-	event_data = request.json
-
-	if "auth" not in request.args:
-		print("Unauthorized event post attempt: No auth param!")
-		return {"success": False}, 401
-
-	if not database.validate_temp_cred(request.remote_addr, request.args.get("auth")):  # 1 hour
-		print("Unauthorized event post attempt: Invalid auth param!")
-		return {"success": False}, 401
-
-	if ("id" not in event_data
-			or "title" not in event_data
-			or "desc" not in event_data
-			or "date" not in event_data
-			or "cover" not in event_data
-			or "photos" not in event_data):
-		return {"success": False}, 400
-
-	def fix_new_image(url):
-		if url.startswith("http"):
-			return url
-		return upload_image(optimize_image(url))
-
-	event_data["photos"] = list(map(lambda url: fix_new_image(url), event_data["photos"]))
-
-	database.delete_event(event_data["id"])
-	event_data.pop("id")
-	database.add_new_event(event_data)
+	database.update_events()
 
 	return {"success": True}, 200
 

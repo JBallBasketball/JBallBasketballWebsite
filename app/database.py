@@ -10,10 +10,19 @@ from bson import CodecOptions, ObjectId
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
+from google.oauth2 import service_account as google_service_account
+from googleapiclient.discovery import build
+
 if os.environ.get('FLASK_ENV') == 'development':
 	from dotenv import load_dotenv
 
 	load_dotenv()
+
+SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
+
+service_account_key = json.loads(os.environ["GOOGLE_SERVICE_ACCOUNT_KEY"])
+creds = google_service_account.Credentials.from_service_account_info(service_account_key, scopes=SCOPES)
+service = build('drive', 'v3', credentials=creds)
 
 google_service_account_key = json.loads(os.environ["GOOGLE_SERVICE_ACCOUNT_KEY"])
 service_account = gspread.service_account_from_dict(google_service_account_key)
@@ -55,10 +64,6 @@ def validate_temp_cred(ip, auth_code):
 	return creds_valid
 
 
-def add_new_event(event_data):
-	events.insert_one(event_data)
-
-
 def get_all_events():
 	event_data = list(events.find())
 	for event in event_data:
@@ -71,5 +76,30 @@ def get_standings_sheet_data():
 	return service_account.open_by_key("1Fz02ntmQ7oQdZPYXKBAR0wgjYWlAsw8qtnrAuO5A7Dk").sheet1.get_all_records()
 
 
-def delete_event(event_id):
-	events.delete_one({"_id": ObjectId(event_id)})
+def update_events():
+	updated_events = []
+
+	query = f"'{os.environ["EVENT_PHOTOS_FOLDER_ID"]}' in parents"
+	results = service.files().list(q=query, fields="files(id, name, mimeType)").execute()
+	event_folders = list(filter(lambda folder_data: folder_data["mimeType"] == "application/vnd.google-apps.folder",
+	                            results.get('files', [])))
+	for event_folder in event_folders:
+		query = f"'{event_folder["id"]}' in parents"
+		file_results = service.files().list(q=query, fields="files(id, name, mimeType)").execute()
+		images = sorted(
+			list(filter(lambda file_data: file_data["mimeType"].startswith("image/"), file_results.get('files', []))),
+			key=lambda file_data: file_data["name"])
+		image_links = list(map(lambda x: f"https://lh3.googleusercontent.com/d/{x["id"]}", images))
+
+		event_title, event_desc, event_date = event_folder["name"].split(" - ")
+
+		updated_events.append({
+			"title": event_title,
+			"date": event_date,
+			"desc": event_desc,
+			"cover": image_links[0],
+			"photos": image_links,
+		})
+
+	events.delete_many({})
+	events.insert_many(updated_events)
