@@ -13,6 +13,8 @@ from pymongo.server_api import ServerApi
 from google.oauth2 import service_account as google_service_account
 from googleapiclient.discovery import build
 
+import requests as req
+
 if os.environ.get('FLASK_ENV') == 'development':
 	from dotenv import load_dotenv
 
@@ -43,10 +45,13 @@ events: pymongo.collection.Collection = db.events
 def add_temp_cred(ip):
 	auth_code = pyotp.random_base32()
 
+	ip_geolocation_data = req.get(f"https://api.iplocation.net/?ip={ip}").json()
+
 	valid_temp_creds.insert_one({
 		"ip": ip,
 		"auth_code": auth_code,
-		"timestamp": datetime.datetime.now(tz=datetime.timezone.utc)
+		"timestamp": datetime.datetime.now(tz=datetime.timezone.utc),
+		"location_code": ip_geolocation_data["country_code2"]
 	})
 
 	return auth_code

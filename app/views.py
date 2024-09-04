@@ -6,6 +6,8 @@ from flask import Blueprint, render_template, send_from_directory, redirect, req
 
 import app.database as database
 
+import requests as req
+
 # import pyotp
 
 if os.environ.get('FLASK_ENV') == 'development':
