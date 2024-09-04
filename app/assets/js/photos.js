@@ -63,6 +63,14 @@ fetch("/api/get-all-events")
 		}
 
 		examplePhotoCard.remove();
+
+		if (allEventData.length === 0) {
+			const noPhotosText = document.createElement("p");
+			noPhotosText.innerText = "No photos yet, check back later!"
+			noPhotosText.classList.add("text-center")
+			photoCardContainer.appendChild(noPhotosText); 
+			photoCardContainer.classList.add("d-flex", "justify-content-center", "align-items-center")
+		}
 	})
 	.catch((err) => {
 		console.log(err);
