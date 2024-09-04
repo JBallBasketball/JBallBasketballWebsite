@@ -102,4 +102,6 @@ def update_events():
 		})
 
 	events.delete_many({})
-	events.insert_many(updated_events)
+
+	if len(updated_events) > 0:
+		events.insert_many(updated_events)
