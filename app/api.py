@@ -1,36 +1,10 @@
-import base64
-import io
-
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
-
-import requests as req
-import json
 import os
 
-import base64
-import io
-import json
-import os
-import time
-
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
-
-import gspread
-import pyotp
-from PIL import Image
-import requests as req
-# import requests as req
-from flask import Blueprint, render_template, send_from_directory, redirect, request, url_for
-
-import gspread
-from PIL import Image
-from flask import Blueprint, render_template, send_from_directory, redirect, request, url_for
+from flask import Blueprint, request
 
 import app.database as database
+
+# import requests as req
 
 if os.environ.get('FLASK_ENV') == 'development':
 	from dotenv import load_dotenv

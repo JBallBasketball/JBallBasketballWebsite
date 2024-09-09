@@ -5,15 +5,12 @@ import os
 import gspread
 import pymongo.database
 import pyotp
-from bson import CodecOptions, ObjectId
-
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
-
+import requests as req
+from bson import CodecOptions
 from google.oauth2 import service_account as google_service_account
 from googleapiclient.discovery import build
-
-import requests as req
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
 if os.environ.get('FLASK_ENV') == 'development':
 	from dotenv import load_dotenv
