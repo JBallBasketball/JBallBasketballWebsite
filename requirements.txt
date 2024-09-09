@@ -1,13 +1,7 @@
-flask~=3.0.3
-imagekitio~=4.0.1
+Flask~=3.0.3
 python-dotenv~=1.0.1
-requests~=2.32.3
 gspread~=6.1.2
+pymongo~=4.8.0
 pyotp~=2.9.0
-pillow~=10.4.0
-cloudinary~=1.41.0
-pymongo[srv]~=4.8.0
-google-auth~=2.34.0
-google-auth-oauthlib~=1.2.1
-google-auth-httplib2~=0.2.0
-google-api-python-client~=2.143.0
+requests~=2.32.3
+imagekitio~=4.0.1

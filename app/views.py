@@ -6,10 +6,6 @@ from flask import Blueprint, render_template, send_from_directory, redirect, req
 
 import app.database as database
 
-import requests as req
-
-# import pyotp
-
 if os.environ.get('FLASK_ENV') == 'development':
 	from dotenv import load_dotenv
 
@@ -19,9 +15,6 @@ views = Blueprint('views', __name__)
 
 google_service_account_key = json.loads(os.environ["GOOGLE_SERVICE_ACCOUNT_KEY"])
 service_account = gspread.service_account_from_dict(google_service_account_key)
-
-
-# otp_validator = pyotp.TOTP(os.environ["OTP_SECRET_KEY"])
 
 
 @views.route("/assets/<path:path>")
