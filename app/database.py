@@ -26,6 +26,9 @@ service = build('drive', 'v3', credentials=creds)
 google_service_account_key = json.loads(os.environ["GOOGLE_SERVICE_ACCOUNT_KEY"])
 service_account = gspread.service_account_from_dict(google_service_account_key)
 
+standings_sheet = service_account.open_by_key("1Fz02ntmQ7oQdZPYXKBAR0wgjYWlAsw8qtnrAuO5A7Dk").sheet1
+signup_sheet = service_account.open_by_key("142O2MTqvnQ1gXvDAzbp8WC1ijN94KbrQ63Phdzhpc8w").sheet1
+
 MONGODB_PASSWORD = os.environ["MONGODB_PASSWORD"]
 
 uri = f"mongodb+srv://jballbasketball:{MONGODB_PASSWORD}@jball.xrazc.mongodb.net/?retryWrites=true&w=majority&appName=JBall"
@@ -75,7 +78,7 @@ def get_all_events():
 
 
 def get_standings_sheet_data():
-	return service_account.open_by_key("1Fz02ntmQ7oQdZPYXKBAR0wgjYWlAsw8qtnrAuO5A7Dk").sheet1.get_all_records()
+	return standings_sheet.get_all_records()
 
 
 def update_events():
@@ -107,3 +110,7 @@ def update_events():
 
 	if len(updated_events) > 0:
 		events.insert_many(updated_events)
+
+
+def add_signup(form):
+	signup_sheet.append_row(list(form.values()))

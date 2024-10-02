@@ -68,6 +68,17 @@ def signup():
 	return render_template("signup.html")
 
 
+@views.route('/regular-season-signup/', methods=['GET'])
+def regular_season_signup():
+	return render_template("regular-season-signup.html")
+
+
+@views.route('/regular-season-signup/', methods=['POST'])
+def regular_season_signup_post():
+	database.add_signup(request.form)
+	return redirect(url_for("views.index"))
+
+
 valid_account_creds = list(map(lambda el: tuple(el.split(":")), os.environ["ADMIN_LOGINS"].split(",")))
 
 
