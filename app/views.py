@@ -79,7 +79,6 @@ def regular_season_signup_post():
 	return redirect(url_for("views.index"))
 
 
-
 valid_account_creds = list(map(lambda el: tuple(el.split(":")), os.environ["ADMIN_LOGINS"].split(",")))
 
 
