@@ -39,7 +39,8 @@ client = MongoClient(uri, server_api=ServerApi('1'))
 db: pymongo.database.Database = client.jball
 valid_temp_creds: pymongo.collection.Collection = db.get_collection("validTempCreds",
                                                                     codec_options=CodecOptions(tz_aware=True))
-events: pymongo.collection.Collection = db.events
+events_db: pymongo.collection.Collection = db.events
+sponsors_db = db.sponsors
 
 
 def add_temp_cred(ip):
@@ -59,26 +60,36 @@ def add_temp_cred(ip):
 
 def validate_temp_cred(ip, auth_code):
 	credential_timestamps = sorted(
-		[datetime.datetime.now(tz=datetime.timezone.utc) - temp_cred["timestamp"] for temp_cred in
+		[datetime.datetime.now(tz=datetime.timezone.utc) - temp_cred["timestamp"]
+		 for temp_cred in
 		 valid_temp_creds.find({
 			 "ip": ip,
 			 "auth_code": auth_code
-		 })])
+		 })]
+	)
 
 	creds_valid = credential_timestamps and credential_timestamps[0] < datetime.timedelta(hours=1)
 	return creds_valid
 
 
+def get_standings_sheet_data():
+	return standings_sheet.get_all_records()
+
+
 def get_all_events():
-	event_data = list(events.find())
+	event_data = list(events_db.find())
 	for event in event_data:
 		event["_id"] = str(event["_id"])
 	event_data.sort(key=lambda x: x["date"], reverse=True)
 	return event_data
 
 
-def get_standings_sheet_data():
-	return standings_sheet.get_all_records()
+def get_sponsors():
+	sponsor_data = list(sponsors_db.find())
+	for sponsor in sponsor_data:
+		sponsor["_id"] = str(sponsor["_id"])
+	sponsor_data.sort(key=lambda x: x["_id"], reverse=True)
+	return sponsor_data
 
 
 def update_events():
@@ -106,10 +117,30 @@ def update_events():
 			"photos": image_links,
 		})
 
-	events.delete_many({})
+	events_db.delete_many({})
 
 	if len(updated_events) > 0:
-		events.insert_many(updated_events)
+		events_db.insert_many(updated_events)
+
+
+def update_sponsors():
+	query = f"'{os.environ["SPONSORS_FOLDER_ID"]}' in parents"
+
+	results = service.files().list(q=query, fields="files(id, name, mimeType)").execute()
+	sponsor_photos = list(filter(lambda file_data: file_data["mimeType"].startswith("image/"),
+	                             results.get('files', [])))
+
+	updated_sponsors = []
+	for sp in sponsor_photos:
+		updated_sponsors.append({
+			"src": f"https://lh3.googleusercontent.com/d/{sp["id"]}",
+			"alt": sp["name"]
+		})
+
+	sponsors_db.delete_many({})
+
+	if len(updated_sponsors) > 0:
+		sponsors_db.insert_many(updated_sponsors)
 
 
 def add_signup(form):
