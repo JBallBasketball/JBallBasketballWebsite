@@ -75,7 +75,7 @@ def regular_season_signup():
 
 @views.route('/regular-season-signup/', methods=['POST'])
 def regular_season_signup_post():
-	database.add_signup(request.form)
+	# database.add_signup(request.form)
 	return redirect(url_for("views.index"))
 
 
