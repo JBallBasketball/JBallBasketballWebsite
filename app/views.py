@@ -102,7 +102,7 @@ def admin_login():
 def admin_login_post():
 	ip = request.remote_addr
 
-	# if ip in banned_ips:
+	#  if ip in banned_ips:
 	# 	return redirect(url_for("views.admin_login"))
 
 	username = request.form.get("username")
