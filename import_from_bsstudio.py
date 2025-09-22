@@ -19,11 +19,10 @@ sitemap_robots_destination = 'app/assets/'
 
 image_directory = 'app/assets/img/'
 
-imagekit_key = json.loads(os.environ["IMAGEKIT_KEY"])
 imagekit = ImageKit(
-	private_key=imagekit_key['private-key'],
-	public_key=imagekit_key['public-key'],
-	url_endpoint=imagekit_key['url-endpoint']
+	private_key=os.environ.get('IMAGEKIT_PRIVATE_KEY'),
+	public_key=os.environ.get('IMAGEKIT_PUBLIC_KEY'),
+	url_endpoint=os.environ.get('IMAGEKIT_URL_ENDPOINT')
 )
 
 VERBOSE = True

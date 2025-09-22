@@ -2,7 +2,7 @@ import json
 import os
 
 import gspread
-from flask import Blueprint, render_template, send_from_directory, redirect, request, url_for
+from flask import Blueprint, render_template, send_from_directory, redirect, request, url_for, abort
 
 import app.database as database
 
@@ -70,11 +70,13 @@ def signup():
 
 @views.route('/regular-season-signup/', methods=['GET'])
 def regular_season_signup():
+	abort(404)
 	return render_template("regular-season-signup.html")
 
 
 @views.route('/regular-season-signup/', methods=['POST'])
 def regular_season_signup_post():
+	abort(404)
 	# database.add_signup(request.form)
 	return redirect(url_for("views.index"))
 
