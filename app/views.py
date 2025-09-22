@@ -6,6 +6,9 @@ from flask import Blueprint, render_template, send_from_directory, redirect, req
 
 import app.database as database
 
+failed_login_attempts = {}
+banned_ips = []
+
 if os.environ.get('FLASK_ENV') == 'development':
 	from dotenv import load_dotenv
 
@@ -102,8 +105,8 @@ def admin_login():
 def admin_login_post():
 	ip = request.remote_addr
 
-	#  if ip in banned_ips:
-	# 	return redirect(url_for("views.admin_login"))
+	if ip in banned_ips:
+		return redirect(url_for("views.admin_login"))
 
 	username = request.form.get("username")
 	password = request.form.get("password")
@@ -113,11 +116,11 @@ def admin_login_post():
 		auth_code = database.add_temp_cred(ip)
 		return redirect(url_for("views.admin", auth=auth_code))
 
-	# if ip not in failed_login_attempts:
-	# 	failed_login_attempts[ip] = 0
-	# failed_login_attempts[ip] += 1
-	#
-	# if failed_login_attempts[ip] > 10:
-	# 	banned_ips.append(ip)
+	if ip not in failed_login_attempts:
+		failed_login_attempts[ip] = 0
+	failed_login_attempts[ip] += 1
+
+	if failed_login_attempts[ip] > 20:
+		banned_ips.append(ip)
 
 	return redirect(url_for("views.admin_login"))
