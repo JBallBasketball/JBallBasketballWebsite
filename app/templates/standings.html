@@ -60,22 +60,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div>
     </nav>
     <div class="d-flex d-lg-flex justify-content-center justify-content-lg-center align-items-lg-center" id="loading-div" style="margin: 1em;">
-        <p class="lead" style="height: 0.5em;">Loading data...&nbsp;</p><span class="spinner-border spinner-border-sm" role="status"></span>
+        <p class="lead" style="height: 0.5em;">Loading data...&nbsp;<br><br></p><span class="spinner-border spinner-border-sm" role="status"></span>
     </div>
     <div class="table-responsive" style="margin: 5% 10%;">
         <table class="table table-striped">
             <thead>
-                <tr>
+                <tr id="standings-header-row">
                     <th scope="col">#</th>
-                    <th scope="col">Team</th>
-                    <th scope="col">GP</th>
-                    <th scope="col">W</th>
-                    <th scope="col">L</th>
-                    <th scope="col">GB</th>
-                    <th scope="col">W %</th>
-                    <th scope="col">PF</th>
-                    <th scope="col">PA</th>
-                    <th scope="col">PD(+/-)</th>
                 </tr>
             </thead>
             <tbody id="standings-container"></tbody>
