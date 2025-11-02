@@ -72,6 +72,10 @@ def validate_temp_cred(ip, auth_code):
 	return creds_valid
 
 
+def get_standings_headers():
+	return standings_sheet.row_values(1)
+
+
 def get_standings_sheet_data():
 	return standings_sheet.get_all_records()
 

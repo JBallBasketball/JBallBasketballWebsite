@@ -13,6 +13,9 @@ if os.environ.get('FLASK_ENV') == 'development':
 
 api = Blueprint('api', __name__)
 
+@api.route('/standings-headers/')
+def get_standings_headers():
+	return database.get_standings_headers()
 
 @api.route('/standings-data/', methods=['GET'])
 def standings_data():
