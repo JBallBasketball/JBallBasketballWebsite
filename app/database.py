@@ -9,6 +9,7 @@ import requests as req
 from bson import CodecOptions
 from google.oauth2 import service_account as google_service_account
 from googleapiclient.discovery import build
+from gspread.utils import ValueRenderOption
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
@@ -23,8 +24,7 @@ service_account_key = json.loads(os.environ["GOOGLE_SERVICE_ACCOUNT_KEY"])
 creds = google_service_account.Credentials.from_service_account_info(service_account_key, scopes=SCOPES)
 service = build('drive', 'v3', credentials=creds)
 
-google_service_account_key = json.loads(os.environ["GOOGLE_SERVICE_ACCOUNT_KEY"])
-service_account = gspread.service_account_from_dict(google_service_account_key)
+service_account = gspread.service_account_from_dict(service_account_key)
 
 standings_sheet = service_account.open_by_key("1Fz02ntmQ7oQdZPYXKBAR0wgjYWlAsw8qtnrAuO5A7Dk").sheet1
 signup_sheet = service_account.open_by_key("142O2MTqvnQ1gXvDAzbp8WC1ijN94KbrQ63Phdzhpc8w").sheet1
@@ -77,7 +77,16 @@ def get_standings_headers():
 
 
 def get_standings_sheet_data():
-	return standings_sheet.get_all_records()
+	standings = standings_sheet.get_all_records()
+	standings_formulas = standings_sheet.get_all_records(
+		value_render_option=ValueRenderOption.formula,
+		numericise_ignore=[5]
+	)
+
+	for i in range(len(standings)):
+		standings[i]["GB"] = standings_formulas[i]["GB"]
+
+	return standings
 
 
 def get_all_events():
