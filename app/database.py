@@ -82,7 +82,6 @@ def get_standings_sheet_data():
 		value_render_option=ValueRenderOption.formula,
 		numericise_ignore=[5]
 	)
-
 	for i in range(len(standings)):
 		standings[i]["GB"] = standings_formulas[i]["GB"]
 
