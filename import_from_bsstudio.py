@@ -27,7 +27,6 @@ imagekit = ImageKit(
 
 VERBOSE = True
 
-
 def vprint(print_string):
 	if VERBOSE:
 		print(print_string)
